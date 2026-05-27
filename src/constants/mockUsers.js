@@ -31,7 +31,7 @@ const mockUsers = [
     id: "usr_01JK8W8B90DEF5678901234CCC",
     email: "johndoe@outlook.com",
     passwordHash:
-      "$2b$10$y9yY3jM/7wZIsZm8B1a4wQ5M9h8vAiB9j0k1l2m3n4o5p6q7r8s9t", // Simulated bcrypt hash for 'BuyerPass123!'
+      "$2b$12$bgUu.IoJNTWtOFnuARhLY.DsUKXWw/BPvB//y4/cnPv4Jotm.N7ry", // Simulated bcrypt hash for 'BuyerPass123!'
     firstName: "John",
     lastName: "Doe",
     role: "buyer",

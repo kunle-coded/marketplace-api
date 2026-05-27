@@ -1,22 +1,21 @@
+// src/services/user.routes.js
+
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
+const authController = require("../controllers/auth.controller");
+const { isAuthenticated } = require("../middlewares/auth.middleware");
 
 // Register a new user
-router.post("/users", userController.registerUser);
-
-// AUTH LEVEL - Login user
-router.post("/auth/login", function (req, res) {
-  res.status(200).json("Login user");
-});
+router.post("/", userController.registerUser);
 
 // AUTH LEVEL - View user profile
 router
-  .route("/users/me")
-  .get(userController.getMe)
-  .patch(userController.updateMe)
-  .delete(userController.deleteMe);
+  .route("/me")
+  .get(isAuthenticated, userController.getMe)
+  .patch(isAuthenticated, userController.updateMe)
+  .delete(isAuthenticated, userController.deleteMe);
 
 // View user profile
-router.get("/users/:id", userController.getUser);
+router.get("/:id", userController.getUser);
 
 module.exports = router;

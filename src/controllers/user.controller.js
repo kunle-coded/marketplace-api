@@ -24,7 +24,8 @@ const registerUser = asyncHandler(async (req, res) => {
  * @param res
  */
 const getMe = asyncHandler(async (req, res) => {
-  res.status(200).json(mockUsers[0]);
+  const userData = await userService.getProfile(req.user);
+  res.status(200).json(userData);
 });
 
 /**

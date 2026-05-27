@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { SALT_ROUNDS } = require("../config/config");
 
 /**
- * Hashes a plain text password.
+ * @description Hashes a plain text password.
  * @param {string} password
  * @returns {Promise<string>}
  */
@@ -13,4 +13,14 @@ const hashPassword = async (password) => {
   return bcrypt.hash(password, salt);
 };
 
-module.exports = { hashPassword };
+/**
+ * @description  plain text password with hashed password
+ * @param {string} password
+ * @param {string} userPassword
+ * @returns {boolean}
+ */
+const comparePassword = (password, userPassword) => {
+  return bcrypt.compare(password, userPassword);
+};
+
+module.exports = { hashPassword, comparePassword };

@@ -18,4 +18,18 @@ const createUser = async (data) => {
   return { message: "User created successfully", data: safeUserOutput };
 };
 
-module.exports = { createUser };
+const getProfile = async (authenticatedUser) => {
+  if (!authenticatedUser || !authenticatedUser.id) {
+    throw new Error("Invalid user context provided");
+  }
+
+  return {
+    id: authenticatedUser.id,
+    email: authenticatedUser.email,
+    firstName: authenticatedUser.firstName,
+    lastName: authenticatedUser.lastName,
+    role: authenticatedUser.role,
+  };
+};
+
+module.exports = { createUser, getProfile };
