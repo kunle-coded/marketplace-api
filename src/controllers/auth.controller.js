@@ -50,4 +50,22 @@ const refresh = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { login, refresh };
+/**
+ * @description Logout user
+ * @route GET api/v1/users/logout
+ * @access Private
+ * @param {object} req
+ * @param {object} res
+ */
+const logout = asyncHandler(async (req, res) => {
+  // Destroy tokens
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  res.status(200).json({ status: "success", message: "Logout successfully" });
+});
+
+module.exports = { login, refresh, logout };

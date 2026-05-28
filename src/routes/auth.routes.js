@@ -9,6 +9,9 @@ const router = Router();
 router.post("/login", authController.login);
 
 // Auth LEVEL – Refresh user access
-router.post("/refresh", authController.refresh);
+router.get("/refresh", authController.refresh);
+
+// Logout
+router.get("/logout", authController.logout);
 
 module.exports = router;

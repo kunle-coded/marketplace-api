@@ -64,4 +64,12 @@ const refreshSession = async (refreshToken) => {
   }
 };
 
+// const logoutUser = (user, res) => {
+//   const userExist = mockUsers.find((u) => u.id === user.id);
+
+//   if (!userExist) {
+//     throw new Error("User does not exist");
+//   }
+// };
+
 module.exports = { loginUser, refreshSession };

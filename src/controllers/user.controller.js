@@ -4,6 +4,8 @@ const asyncHandler = require("express-async-handler");
 const mockUsers = require("../constants/mockUsers");
 const userService = require("../services/user.service");
 
+const users = Array.from(mockUsers);
+
 /**
  * @description Register new user
  * @route GET /api/v1/users
@@ -39,7 +41,7 @@ const updateMe = asyncHandler(async (req, res) => {
   res
     .status(201)
     .json(
-      `User ${mockUsers[0].firstName} ${mockUsers[0].lastName} updated successfully.`,
+      `User ${users[0].firstName} ${users[0].lastName} updated successfully.`,
     );
 });
 
