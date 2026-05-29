@@ -2,6 +2,8 @@
 
 const cryptoUtil = require("../utils/crypto.util");
 const mockUsers = require("../constants/mockUsers");
+const uuid = require("node:crypto");
+const User = require("../repositories/user.repository");
 
 const createUser = async (data) => {
   const { password, ...restOfUserData } = data;
@@ -9,11 +11,14 @@ const createUser = async (data) => {
   const hashedPass = await cryptoUtil.hashPassword(password);
 
   const databasePayload = {
+    id: uuid.randomUUID(),
     ...restOfUserData,
     passwordHash: hashedPass,
   };
 
-  const { passwordHash, ...safeUserOutput } = databasePayload;
+  const user = await User.save(databasePayload);
+
+  const { password_hash, balance_in_cents, ...safeUserOutput } = user;
 
   return { message: "User created successfully", data: safeUserOutput };
 };
