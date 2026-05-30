@@ -4,9 +4,16 @@ const cryptoUtil = require("../utils/crypto.util");
 const mockUsers = require("../constants/mockUsers");
 const uuid = require("node:crypto");
 const User = require("../repositories/user.repository");
+const { BadRequestError } = require("../errors");
 
 const createUser = async (data) => {
   const { password, ...restOfUserData } = data;
+
+  const userExists = await User.findByEmail(restOfUserData.email);
+
+  if (userExists) {
+    throw new BadRequestError("This email is already registered.");
+  }
 
   const hashedPass = await cryptoUtil.hashPassword(password);
 
