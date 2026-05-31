@@ -3,6 +3,8 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const { JWT_ACCESS_SECRET } = require("../config/config");
+const { BadRequestError, UnauthorizedError } = require("../errors");
+const User = require("../repositories/user.repository");
 
 const mockUsers = require("../constants/mockUsers");
 
@@ -19,15 +21,18 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(accessToken, JWT_ACCESS_SECRET);
 
-    const user = mockUsers.find((u) => u.id === decoded.userId);
+    const user = User.findById(decoded.id);
 
     if (!user) {
       res.status(404);
-      throw new Error("The user belonging to this token no longer exists.");
+      throw new BadRequestError(
+        "The user belonging to this token no longer exists.",
+      );
     }
 
     if (user.status === "suspended") {
       res.status(403);
+      //   NOTE Change to forbidden error
       throw new Error("Your account has been suspended.");
     }
 
@@ -35,7 +40,7 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
     next();
   } catch (error) {
     res.status(401);
-    throw new Error("Not authorized or invalid token signature");
+    throw new UnauthorizedError("Not authorized or invalid token signature");
   }
 });
 

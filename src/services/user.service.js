@@ -21,6 +21,8 @@ const createUser = async (data) => {
     id: uuid.randomUUID(),
     ...restOfUserData,
     passwordHash: hashedPass,
+    balanceInCents: 0,
+    status: "active",
   };
 
   const user = await User.save(databasePayload);

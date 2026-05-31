@@ -38,4 +38,4 @@ const save = async (payload) => {
   return rows[0];
 };
 
-module.exports = { findByEmail, save };
+module.exports = { save, findByEmail, findById };

@@ -5,17 +5,21 @@ const jwt = require("jsonwebtoken");
 const jwtUtil = require("../utils/jwt.util");
 const cryptoUtil = require("../utils/crypto.util");
 const { JWT_REFRESH_SECRET } = require("../config/config");
+const { BadRequestError } = require("../errors");
+
+const User = require("../repositories/user.repository");
 
 const mockUsers = require("../constants/mockUsers");
 
 const loginUser = async (email, password) => {
-  const user = mockUsers.find((u) => u.email === email);
+  const user = await User.findByEmail(email);
 
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new BadRequestError("Invalid email or password");
   }
 
   if (user.status === "suspended") {
+    //NOTE Create ForbiddenError (403) class later and throw here
     throw new Error("This account has been suspended. Please contact support.");
   }
 
@@ -25,7 +29,7 @@ const loginUser = async (email, password) => {
   );
 
   if (!isPasswordValid) {
-    throw new Error("Invalid email or password");
+    throw new BadRequestError("Invalid email or password");
   }
 
   const accessToken = jwtUtil.generateAccessToken({
@@ -41,7 +45,7 @@ const loginUser = async (email, password) => {
 
 const refreshSession = async (refreshToken) => {
   if (!refreshToken) {
-    throw new Error("Refresh token missing");
+    throw new BadRequestError("Refresh token missing");
   }
 
   try {
@@ -50,6 +54,7 @@ const refreshSession = async (refreshToken) => {
     const user = mockUsers.find((u) => u.id === decoded.userId);
 
     if (!user || user.status === "suspended") {
+      //NOTE Create ForbiddenError (403) class later and throw here
       throw new Error("User session is invalid or suspended");
     }
 
@@ -60,7 +65,7 @@ const refreshSession = async (refreshToken) => {
 
     return { accessToken: newAccessToken };
   } catch (error) {
-    throw new Error("Invalid or expired refresh token");
+    throw new BadRequestError("Invalid or expired refresh token");
   }
 };
 
