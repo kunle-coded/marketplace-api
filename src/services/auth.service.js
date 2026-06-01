@@ -12,7 +12,7 @@ const User = require("../repositories/user.repository");
 const mockUsers = require("../constants/mockUsers");
 
 const loginUser = async (email, password) => {
-  const user = await User.findByEmail(email);
+  const user = await User.findByEmailWithPassword(email);
 
   if (!user) {
     throw new BadRequestError("Invalid email or password");
