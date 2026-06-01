@@ -44,4 +44,23 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { isAuthenticated };
+const restrictTo = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return next(new UnauthorizedError("You are not authenticated."));
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      // NOTE Change to forbidden error
+      return next(
+        new BadRequestError(
+          "You do not have permission to perform this action.",
+        ),
+      );
+    }
+
+    next();
+  };
+};
+
+module.exports = { isAuthenticated, restrictTo };

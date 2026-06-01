@@ -3,7 +3,10 @@
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
 const authController = require("../controllers/auth.controller");
-const { isAuthenticated } = require("../middlewares/auth.middleware");
+const {
+  isAuthenticated,
+  restrictTo,
+} = require("../middlewares/auth.middleware");
 
 // Register a new user
 router.post("/", userController.registerUser);
@@ -15,7 +18,22 @@ router
   .patch(isAuthenticated, userController.updateMe)
   .delete(isAuthenticated, userController.deleteMe);
 
-// View user profile
-router.get("/:id", userController.getUser);
+// Delete a user - ONLY Admins
+router
+  .route("/:id")
+  .get(userController.getUser)
+  .delete(
+    isAuthenticated,
+    restrictTo("admin", "super-admin"),
+    userController.deleteUser,
+  );
+
+// Get admin dashboard
+router.get(
+  "/admin/dashboard",
+  isAuthenticated,
+  restrictTo("admin"),
+  userController.getAdminDashboard,
+);
 
 module.exports = router;

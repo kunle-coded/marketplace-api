@@ -46,7 +46,7 @@ const updateMe = asyncHandler(async (req, res) => {
 });
 
 /**
- * @description Delete user
+ * @description Delete own account
  * @route DELETE /api/v1/users/me
  * @access Private
  * @param req
@@ -61,6 +61,18 @@ const deleteMe = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @description Delete user account
+ * @route DELETE /api/v1/users/:id
+ * @access Private
+ * @param req
+ * @param res
+ */
+const deleteUser = asyncHandler(async (req, res) => {
+  const { passwordHash, ...userData } = mockUsers[0];
+  res.status(200).json(userData);
+});
+
+/**
  * @description View user profile
  * @route GET /api/v1/users/:id
  * @access Public
@@ -72,4 +84,24 @@ const getUser = asyncHandler(async (req, res) => {
   res.status(200).json(userData);
 });
 
-module.exports = { registerUser, getMe, updateMe, deleteMe, getUser };
+/**
+ * @description View admin user profile
+ * @route GET /api/v1/users/admin/dashboard
+ * @access Private
+ * @param req
+ * @param res
+ */
+const getAdminDashboard = asyncHandler(async (req, res) => {
+  const { passwordHash, ...userData } = mockUsers[0];
+  res.status(200).json(userData);
+});
+
+module.exports = {
+  registerUser,
+  getMe,
+  updateMe,
+  deleteMe,
+  getUser,
+  deleteUser,
+  getAdminDashboard,
+};
