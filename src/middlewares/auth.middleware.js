@@ -3,7 +3,11 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const { JWT_ACCESS_SECRET } = require("../config/config");
-const { BadRequestError, UnauthorizedError } = require("../errors");
+const {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+} = require("../errors");
 const User = require("../repositories/user.repository");
 
 const mockUsers = require("../constants/mockUsers");
@@ -13,7 +17,7 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401);
-    throw new Error("Not authorized, no token provided");
+    throw new UnauthorizedError("Not authorized, no token provided");
   }
 
   const accessToken = authHeader.split(" ")[1];
@@ -32,8 +36,7 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
 
     if (user.status === "suspended") {
       res.status(403);
-      //   NOTE Change to forbidden error
-      throw new Error("Your account has been suspended.");
+      throw new ForbiddenError("Your account has been suspended.");
     }
 
     req.user = user;
@@ -76,9 +79,8 @@ const restrictTo = (...allowedRoles) => {
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      // NOTE Change to forbidden error
       return next(
-        new BadRequestError(
+        new ForbiddenError(
           "You do not have permission to perform this action.",
         ),
       );

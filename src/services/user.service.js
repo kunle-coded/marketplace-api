@@ -34,7 +34,7 @@ const createUser = async (data) => {
 
 const getProfile = async (authenticatedUser) => {
   if (!authenticatedUser || !authenticatedUser.id) {
-    throw new Error("Invalid user context provided.");
+    throw new BadRequestError("Invalid user context provided.");
   }
 
   return {
