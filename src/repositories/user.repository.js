@@ -62,6 +62,7 @@ const findById = async (id) => {
 };
 
 const findAndUpdate = async (id, data) => {
+  console.log(id, data);
   const keys = Object.keys(data);
   if (keys.length === 0) return null;
 

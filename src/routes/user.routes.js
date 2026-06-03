@@ -5,6 +5,7 @@ const userController = require("../controllers/user.controller");
 const authController = require("../controllers/auth.controller");
 const {
   isAuthenticated,
+  isOptionalAuthenticated,
   restrictTo,
 } = require("../middlewares/auth.middleware");
 
@@ -21,19 +22,11 @@ router
 // Delete a user - ONLY Admins
 router
   .route("/:id")
-  .get(userController.getUser)
+  .get(isOptionalAuthenticated, userController.getUser)
   .delete(
     isAuthenticated,
     restrictTo("admin", "super-admin"),
     userController.deleteUser,
   );
-
-// Get admin dashboard
-router.get(
-  "/admin/dashboard",
-  isAuthenticated,
-  restrictTo("admin"),
-  userController.getAdminDashboard,
-);
 
 module.exports = router;

@@ -4,8 +4,6 @@ const asyncHandler = require("express-async-handler");
 const mockUsers = require("../constants/mockUsers");
 const userService = require("../services/user.service");
 
-const users = Array.from(mockUsers);
-
 /**
  * @description Register new user
  * @route GET /api/v1/users
@@ -38,11 +36,8 @@ const getMe = asyncHandler(async (req, res) => {
  * @param res
  */
 const updateMe = asyncHandler(async (req, res) => {
-  res
-    .status(201)
-    .json(
-      `User ${users[0].firstName} ${users[0].lastName} updated successfully.`,
-    );
+  const updated = await userService.updateUser(req.user.id, req.body);
+  res.status(201).json(updated);
 });
 
 /**
@@ -53,47 +48,51 @@ const updateMe = asyncHandler(async (req, res) => {
  * @param res
  */
 const deleteMe = asyncHandler(async (req, res) => {
-  res
-    .status(200)
-    .json(
-      `User ${mockUsers[3].firstName} ${mockUsers[3].lastName} deleted successfully.`,
-    );
+  const userId = req.user.id;
+
+  await userService.deleteAccount(userId);
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/api/v1/auth",
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: "Your account has been successfully deleted.",
+  });
 });
 
 /**
  * @description Delete user account
  * @route DELETE /api/v1/users/:id
- * @access Private
+ * @access Private + Admin
  * @param req
  * @param res
  */
 const deleteUser = asyncHandler(async (req, res) => {
-  const { passwordHash, ...userData } = mockUsers[0];
-  res.status(200).json(userData);
+  const targetId = req.params.id;
+
+  await userService.deleteAccount(targetId);
+
+  res.status(200).json({
+    status: "success",
+    message: "User account successfully deleted by administrator.",
+  });
 });
 
 /**
- * @description View user profile
+ * @description Get user profile by id
  * @route GET /api/v1/users/:id
  * @access Public
  * @param req
  * @param res
  */
 const getUser = asyncHandler(async (req, res) => {
-  const { passwordHash, ...userData } = mockUsers[0];
-  res.status(200).json(userData);
-});
-
-/**
- * @description View admin user profile
- * @route GET /api/v1/users/admin/dashboard
- * @access Private
- * @param req
- * @param res
- */
-const getAdminDashboard = asyncHandler(async (req, res) => {
-  const { passwordHash, ...userData } = mockUsers[0];
-  res.status(200).json(userData);
+  const user = await userService.getUserById(req.params.id, req.user);
+  res.status(200).json({ status: "success", data: user });
 });
 
 module.exports = {
@@ -103,5 +102,4 @@ module.exports = {
   deleteMe,
   getUser,
   deleteUser,
-  getAdminDashboard,
 };

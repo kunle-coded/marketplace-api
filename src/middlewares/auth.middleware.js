@@ -21,7 +21,7 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(accessToken, JWT_ACCESS_SECRET);
 
-    const user = User.findById(decoded.id);
+    const user = await User.findById(decoded.userId);
 
     if (!user) {
       res.status(404);
@@ -39,8 +39,33 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    if (error.statusCode) return next(error);
+
     res.status(401);
     throw new UnauthorizedError("Not authorized or invalid token signature");
+  }
+});
+
+const isOptionalAuthenticated = asyncHandler(async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.user = null;
+    return next();
+  }
+
+  const accessToken = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(accessToken, JWT_ACCESS_SECRET);
+
+    const user = await User.findById(decoded.userId);
+
+    req.user = user || null;
+    next();
+  } catch (error) {
+    req.user = user || null;
+    next();
   }
 });
 
@@ -63,4 +88,4 @@ const restrictTo = (...allowedRoles) => {
   };
 };
 
-module.exports = { isAuthenticated, restrictTo };
+module.exports = { isAuthenticated, isOptionalAuthenticated, restrictTo };

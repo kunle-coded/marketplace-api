@@ -25,7 +25,7 @@ const loginUser = async (email, password) => {
 
   const isPasswordValid = await cryptoUtil.comparePassword(
     password,
-    user.passwordHash,
+    user.password_hash,
   );
 
   if (!isPasswordValid) {
@@ -38,7 +38,7 @@ const loginUser = async (email, password) => {
   });
   const refreshToken = jwtUtil.generateRefreshToken({ id: user.id });
 
-  const { passwordHash, ...safeUser } = user;
+  const { password_hash, ...safeUser } = user;
 
   return { user: safeUser, accessToken, refreshToken };
 };

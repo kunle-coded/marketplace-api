@@ -22,6 +22,7 @@ const login = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: NODE_ENV !== "production",
     sameSite: "strict",
+    path: "/api/v1/auth",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -34,7 +35,7 @@ const login = asyncHandler(async (req, res) => {
 
 /**
  * @description Refresh user token
- * @route POST api/v1/auth/login
+ * @route POST api/v1/auth/refresh
  * @access Public
  * @param {object} req
  * @param {object} res
@@ -52,7 +53,7 @@ const refresh = asyncHandler(async (req, res) => {
 
 /**
  * @description Logout user
- * @route GET api/v1/users/logout
+ * @route GET api/v1/auth/logout
  * @access Private
  * @param {object} req
  * @param {object} res
@@ -63,6 +64,7 @@ const logout = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: NODE_ENV === "production",
     sameSite: "strict",
+    path: "/api/v1/auth",
   });
 
   res.status(200).json({ status: "success", message: "Logout successfully" });
