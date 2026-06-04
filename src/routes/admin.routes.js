@@ -1,13 +1,13 @@
 // src/routes/admin.routes.js
 
-const Router = require("express");
+const express = require("express");
 const adminController = require("../controllers/admin.controller");
 const {
   isAuthenticated,
   restrictTo,
 } = require("../middlewares/auth.middleware");
 
-const router = Router();
+const router = express.Router();
 
 router.get(
   "/dashboard",
