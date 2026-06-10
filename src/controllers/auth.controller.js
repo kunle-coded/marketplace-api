@@ -59,7 +59,6 @@ const refresh = asyncHandler(async (req, res) => {
  * @param {object} res
  */
 const logout = asyncHandler(async (req, res) => {
-  // Destroy tokens
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: NODE_ENV === "production",

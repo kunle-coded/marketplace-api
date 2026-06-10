@@ -3,6 +3,7 @@
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
 const authController = require("../controllers/auth.controller");
+const orderController = require("../controllers/order.controller");
 const {
   isAuthenticated,
   isOptionalAuthenticated,
@@ -28,5 +29,7 @@ router
     restrictTo("admin", "super-admin"),
     userController.deleteUser,
   );
+
+router.get("/me/orders", isAuthenticated, orderController.getOrders);
 
 module.exports = router;
